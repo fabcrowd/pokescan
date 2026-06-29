@@ -1,0 +1,28 @@
+/output/
+__pycache__/
+*.pyc
+.venv/
+venv/
+_skill-src/
+
+# AgentCAD versioned run directories (large binary outputs)
+v*_*/
+
+# Design binary outputs (keep .stl for printing, exclude heavy mesh/step/glb)
+design/output/*.step
+design/output/*.glb
+design/glb/
+design/previews/
+
+# Old design archive (large historical directory)
+old designs/
+
+# Autopilot framework (has its own git repo; not project source)
+autopilot/
+
+# AgentCAD session data
+.agentcad/
+
+# User-local skill caches (not project-specific)
+.claude/
+.cursor/skills/

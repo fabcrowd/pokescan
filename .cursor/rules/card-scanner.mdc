@@ -1,0 +1,67 @@
+---
+description: Card scanner CAD/print workflow — Toybox, build_woodstand + build123d design/, audit pipeline
+globs: build_woodstand.py,design/**,output/**,scripts/**,docs/**
+alwaysApply: false
+---
+
+# Card Scanner — AI CAD & Print Workflow
+
+Reference: [How to Use Claude AI for 3D Printing (2026)](https://3dprinteddecor.com/how-to-use-claude-for-3d-printing/). **Verify before print** — script checks + visual preview + Creator Space.
+
+## CAD stack (do not conflate)
+
+| Task | Tool | Skill / run |
+|------|------|-------------|
+| **Legacy stand export** (base, column, lane, magazine…) | `build_woodstand.py` | **grinding-until-pass** + **incremental-implementation** → `py build_woodstand.py` |
+| **Redesign parts** (wheel-head, **photo box**, platen) | `design/wheel_head_b123.py`, `design/thread_geom.py` | **build123d** skill — male `TrapezoidalThread`, female pre-bore + `Thread` groove |
+| New greenfield part (jig, bracket) | CadQuery | **parametric-3d-printing** |
+| One-off SCAD (user asks) | OpenSCAD | **openscad** |
+
+**Never** use CadQuery helix sweeps for threads — non-watertight STLs. Female nuts: pre-bore `NUT_BORE_R` then subtract `TrapezoidalThread(external=False, diameter=18.8)` from the ring (see `design/thread_geom.py`). **Never** `Thread` helical groove subtract (gaps in mesh).
+
+### build123d run (no local venv)
+
+```bash
+uvx --from build123d --with bd_warehouse --with trimesh python design/wheel_head_b123.py
+```
+
+Read skill first: `~/.claude/plugins/cache/vibecad/build123d/*/skills/build123d/SKILL.md`
+
+### Full audit (both pipelines)
+
+```bash
+py scripts/audit_builds.py
+```
+
+Mesh-only: `py scripts/audit_builds.py --mesh-only` or `py scripts/audit_meshes.py`
+
+### Visual check
+
+```bash
+py scripts/preview_stl.py design/output/<part>.stl
+py scripts/preview_stl.py output/<part>.stl
+```
+
+**AgentCAD MCP** (Cursor + Claude Code): inline build123d execute/render — reload MCP after editing `~/.cursor/mcp.json`.
+
+## Printer context
+
+| Field | Value |
+|-------|-------|
+| Printer | **Toybox Alpha 3** — usable **68 × 78 × 88 mm** |
+| Bed | **Unheated** — **brim** on large flats |
+| Filament | Matte PLA 1.75 mm — white/coconut scan surfaces, **black** structural |
+
+## Hard constraints
+
+See `CLAUDE.md` — lens-to-card ≥ **260 mm** (target **296 mm** on redesign), card **63×88 mm** unsleeved.
+
+## Architecture direction
+
+- **Active:** wheel-head in `design/wheel_head_b123.py` (9 parts, M3 hardware).
+- **Next:** `design/photo_box.py` — white box + `card_platen` (replaces lane/magazine chute).
+- **Legacy:** `build_woodstand.py` still exports old lane/magazine until Phase 3 port — do not invest in fixing chute unless staying on legacy path.
+
+## Iterative design
+
+One part / one boolean per pass → rebuild → audit → preview → slicer check.

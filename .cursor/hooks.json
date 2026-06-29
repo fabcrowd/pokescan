@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" .cursor/hooks/sync-mcpmarket-skills.sh",
+        "timeout": 30
+      }
+    ]
+  }
+}

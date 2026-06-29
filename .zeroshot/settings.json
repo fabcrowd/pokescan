@@ -1,0 +1,12 @@
+{
+  "ship": {
+    "requiredQualityGates": [
+      {
+        "id": "card-scanner-audit",
+        "scope": "repo",
+        "description": "Full stand + wheel-head build, mesh audit, thread verification",
+        "command": "py scripts/audit_builds.py"
+      }
+    ]
+  }
+}

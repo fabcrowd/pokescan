@@ -1,0 +1,55 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Gens-ai/autopilot/main/autopilot.schema.json",
+  "version": "1.0.0",
+
+  "project": {
+    "type": "python",
+    "conventions": {
+      "testFilePattern": "design/*_verify.py",
+      "testDirectory": "design",
+      "sourceDirectory": "design"
+    }
+  },
+
+  "feedbackLoops": {
+    "typecheck": {
+      "command": null,
+      "enabled": false
+    },
+    "tests": {
+      "command": "py design/cs2_verify.py",
+      "enabled": true,
+      "sandbox": false
+    },
+    "lint": {
+      "command": null,
+      "enabled": false
+    }
+  },
+
+  "iterations": {
+    "tasks": 20,
+    "tests": 10,
+    "lint": 15,
+    "entropy": 10,
+    "command": 10
+  },
+
+  "analytics": {
+    "enabled": true,
+    "thrashingThreshold": 3
+  },
+
+  "codebase": {
+    "patterns": [
+      "build123d scripts — no imports needed, AgentCAD pre-injects primitives",
+      "PART selector at top of each design script controls which part renders/exports",
+      "STLs land in design/output/ with descriptive names",
+      "AgentCAD MCP: mcp__agentcad__run -> mcp__agentcad__render -> mcp__agentcad__export",
+      "Toybox usable bed: 68x78x88mm — every STL must fit",
+      "Verify with py design/cs2_verify.py (31 checks) and py design/cs30_verify.py (19 checks)"
+    ],
+    "architecture": "Parametric Python CAD project. build123d + bd_warehouse for wheel-head and CS2/CS30/photo_box parts. trimesh + manifold3d for original stand (build_woodstand.py). AgentCAD MCP provides visual feedback loop (render PNG after each script run). All geometry validated against Toybox 68x78x88mm bed.",
+    "dependencies": ["build123d", "bd_warehouse", "trimesh", "manifold3d", "numpy", "scipy"]
+  }
+}
